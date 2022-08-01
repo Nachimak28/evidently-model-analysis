@@ -28,7 +28,7 @@ class EvidentlyModelAnalysis(L.LightningWork):
 
     def run(self):
         col_map = ColumnMapping()
-        col_map.target = self.target_column
+        col_map.target = self.target_column_name
         col_map.prediction = self.prediction_column_name
         train_df = pd.read_csv(self.train_dataframe_path)
         test_df = pd.read_csv(self.test_dataframe_path)
