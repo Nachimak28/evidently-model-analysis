@@ -12,7 +12,7 @@ class EvidentlyModelAnalysis(L.LightningWork):
         super().__init__(parallel=parallel)
         self.train_dataframe_path = train_dataframe_path
         self.test_dataframe_path = test_dataframe_path
-        self.target_column = target_column_name
+        self.target_column_name = target_column_name
         self.task_type = task_type
         self.prediction_column_name = prediction_column_name
         self.report_path = None
