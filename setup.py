@@ -9,7 +9,7 @@ setup(
     author="Nachiket Makwana",
     author_email="nachimak28@gmail.com",
     # REPLACE WITH YOUR OWN GITHUB PROJECT LINK
-    url="https://github.com/Lightning-AI/evidently-model-analysis",
+    url="https://github.com/Nachimak28/evidently-model-analysis",
     install_requires=[],
     packages=find_packages(),
 )
