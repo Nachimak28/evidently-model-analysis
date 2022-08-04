@@ -1,6 +1,7 @@
 import pandas as pd
 from evidently_model_analysis import EvidentlyModelAnalysis
 from lightning.app.frontend.web import StaticWebFrontend
+from lightning.app.storage.payload import Payload
 import lightning as L
 from sklearn import ensemble
 
@@ -12,8 +13,19 @@ class StaticPageViewer(L.LightningFlow):
     def configure_layout(self):
         return StaticWebFrontend(serve_dir=self.serve_dir)
 
+
+class TempWorkComponent(L.LightningWork):
+    def __init__(self, parallel=True) -> None:
+        super().__init__(parallel=parallel)
+        self.train_df = None
+        self.test_df = None
+
+    def run(self):
+        self.train_df = Payload(pd.read_csv('ba_cancer_train_df_with_preds.csv'))
+        self.test_df = Payload(pd.read_csv('ba_cancer_test_df_with_preds.csv'))
+
 class LitApp(L.LightningFlow):
-    def __init__(self, train_dataframe_path, test_dataframe_path, target_column_name, prediction_column_name, task_type) -> None:
+    def __init__(self, train_dataframe_path=None, test_dataframe_path=None, target_column_name=None, prediction_column_name=None, task_type='classification') -> None:
         super().__init__()
         self.train_dataframe_path = train_dataframe_path
         self.test_dataframe_path = test_dataframe_path
@@ -25,11 +37,17 @@ class LitApp(L.LightningFlow):
                                                         test_dataframe_path=self.test_dataframe_path,
                                                         target_column_name=self.target_column_name,
                                                         prediction_column_name=self.prediction_column_name,
-                                                        task_type=self.task_type)
+                                                        task_type=self.task_type,
+                                                        parallel=False)
         self.report_render = StaticPageViewer(self.evidently_model_analysis.report_parent_path)
+        self.temp_component = TempWorkComponent(parallel=False)
 
     def run(self):
-        self.evidently_model_analysis.run()
+        self.temp_component.run()
+        self.evidently_model_analysis.task_type = 'classification'
+        self.evidently_model_analysis.target_column_name = 'target'
+        self.evidently_model_analysis.prediction_column_name = 'prediction'
+        self.evidently_model_analysis.run(train_df=self.temp_component.train_df, test_df=self.temp_component.test_df)
         print(self.evidently_model_analysis.report_path)
 
     def configure_layout(self):
@@ -67,13 +85,15 @@ if __name__ == "__main__":
     train_df.to_csv('ba_cancer_train_df_with_preds.csv', index=False)
     test_df.to_csv('ba_cancer_test_df_with_preds.csv', index=False)
 
-    app = L.LightningApp(LitApp(
-            train_dataframe_path='ba_cancer_train_df_with_preds.csv',
-            test_dataframe_path='ba_cancer_test_df_with_preds.csv',
-            target_column_name='target',
-            prediction_column_name='prediction',
-            task_type='classification'
-        ))
+    # app = L.LightningApp(LitApp(
+    #         train_dataframe_path='ba_cancer_train_df_with_preds.csv',
+    #         test_dataframe_path='ba_cancer_test_df_with_preds.csv',
+    #         target_column_name='target',
+    #         prediction_column_name='prediction',
+    #         task_type='classification'
+    #     ))
+
+    app = L.LightningApp(LitApp())
 
     # regression use case
     # similar case can be made for regresion
