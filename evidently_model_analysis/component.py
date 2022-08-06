@@ -17,8 +17,8 @@ class EvidentlyModelAnalysis(L.LightningWork):
         self.task_type = task_type
         self.prediction_column_name = prediction_column_name
         self.report_path = None
-        tmp_dir = tempfile.mkdtemp()
-        self.report_parent_path = os.path.join(tmp_dir, 'model_performance')
+        
+        self.report_parent_path = None
         
 
         self.supported_task_types = ['classification', 'regression']
@@ -28,7 +28,10 @@ class EvidentlyModelAnalysis(L.LightningWork):
 
 
     def run(self, train_df: Payload=None, test_df: Payload=None):
+        tmp_dir = tempfile.mkdtemp()
         os.makedirs(self.report_parent_path, exist_ok=True)
+        self.report_parent_path = os.path.join(tmp_dir, 'model_performance')
+
         col_map = ColumnMapping()
         col_map.target = self.target_column_name
         col_map.prediction = self.prediction_column_name
