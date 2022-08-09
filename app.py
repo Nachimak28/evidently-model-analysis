@@ -1,9 +1,11 @@
+import os
 import pandas as pd
 from evidently_model_analysis import EvidentlyModelAnalysis
 from lightning.app.frontend.web import StaticWebFrontend
 from lightning.app.storage.payload import Payload
 import lightning as L
 from sklearn import ensemble
+import tempfile
 
 class StaticPageViewer(L.LightningFlow):
     def __init__(self, page_path: str):
@@ -32,6 +34,7 @@ class LitApp(L.LightningFlow):
         self.target_column_name = target_column_name
         self.prediction_column_name = prediction_column_name
         self.task_type = task_type
+        
         self.evidently_model_analysis = EvidentlyModelAnalysis(
                                                         train_dataframe_path=self.train_dataframe_path,
                                                         test_dataframe_path=self.test_dataframe_path,
@@ -39,7 +42,9 @@ class LitApp(L.LightningFlow):
                                                         prediction_column_name=self.prediction_column_name,
                                                         task_type=self.task_type,
                                                         parallel=False)
-        self.report_render = StaticPageViewer(self.evidently_model_analysis.report_parent_path)
+
+        self.report_render = StaticPageViewer(self.evidently_data_analysis.report_parent_path)
+        
         self.temp_component = TempWorkComponent(parallel=False)
 
     def run(self):
@@ -49,6 +54,7 @@ class LitApp(L.LightningFlow):
         self.evidently_model_analysis.prediction_column_name = 'prediction'
         self.evidently_model_analysis.run(train_df=self.temp_component.train_df, test_df=self.temp_component.test_df)
         print(self.evidently_model_analysis.report_path)
+
 
     def configure_layout(self):
         tab_1 = {'name': 'Model report', 'content': self.report_render}
