@@ -43,7 +43,6 @@ Example #1 - Passing data during initialization
 ```python
 import pandas as pd
 from evidently_model_analysis import EvidentlyModelAnalysis
-from lightning.app.frontend.web import StaticWebFrontend
 import lightning as L
 
 class LitApp(L.LightningFlow):
