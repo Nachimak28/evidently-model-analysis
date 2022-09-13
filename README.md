@@ -132,5 +132,5 @@ if __name__ == "__main__":
 
 - [x] Complete the readme
 - [x] Test in Lightning cloud
-- [ ] Write relevant tests and test locally
+- [x] Write relevant tests and test locally
 
