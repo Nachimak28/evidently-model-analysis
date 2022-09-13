@@ -37,7 +37,7 @@ class LitApp(L.LightningFlow):
     def configure_layout(self):
 			# wait for work to complete so that manual refresh is not required
       if self.evidently_model_analysis.report_path:
-        tab_1 = {'name': 'Data report', 'content': self.evidently_model_analysis}
+        tab_1 = {'name': 'Model report', 'content': self.evidently_model_analysis}
       else:
         tab_1 = []
       return tab_1
