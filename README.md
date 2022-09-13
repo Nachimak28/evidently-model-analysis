@@ -6,9 +6,6 @@ This ⚡ [Lightning component](lightning.ai) ⚡ was generated automatically wit
 lightning init component evidently_model_analysis
 ```
 
-## Note
-This component's behaviour is a bit weird. It takes some time for the output to be generated and visible in the browser. Try and refresh a couple of times in the browser to see the output.
-
 ## What problem is this component solving?
 After training our model and generating predictions, this component helps identify if there is any kind of Model drift seen based on the model performance.
 
@@ -24,6 +21,19 @@ First, install evidently_model_analysis (warning: this component has not been of
 
 ```bash
 lightning install component https://github.com/Nachimak28/evidently_model_analysis
+```
+
+If the above does not work, manually setup the environment:
+
+```bash
+git clone https://github.com/Nachimak28/evidently-model-analysis
+cd evidently-model-analysis
+conda create --yes --name evidently python=3.8
+conda activate evidently
+python -m pip install -r requirements.txt
+python -m pip install lightning
+python -m lightning run app app.py
+python -m lightning run app app.py --cloud
 ```
 
 Once the app is installed, use it in an app:
